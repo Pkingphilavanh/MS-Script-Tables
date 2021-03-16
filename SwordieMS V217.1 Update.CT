@@ -1,0 +1,530 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CheatTable MugenJinFuuTableVersion="34">
+  <CheatEntries>
+    <CheatEntry>
+      <ID>2</ID>
+      <Description>"M Bypass STILL WORKS V216.1 V217.1"</Description>
+      <LastState Activated="1"/>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>[ENABLE]
+aobscan(mscrc_bypass,55 8B EC 6A FF 68 ? ? ? ? 64 A1 00 00 00 00 50 81 EC ? ? ? ? A1 ? ? ? ? 33 C5 89 ? ? 53 56 57 50 8D ? ? 64 A3 ? ? ? ? 89 ? ? C7 ? ? ? ? ? ? 6A 01 8B 4D ?)
+label(_mscrc_bypass)
+registersymbol(_mscrc_bypass)
+
+// eb ? c7 85 ? ? ? ? ff c9 9a 3b 8b ? ? ? ? ? 89 ? ? ? ? ? 8b ? ? 81 ? ? ? ? ? e8 [func start]
+mscrc_bypass: // CWvsContext::OnEnterField: E8 ? ? ? ? 8B ? ? 83 ? ? 8B ? 89 ? ? 8D [First result (CField::Init) &amp; follow call]
+_mscrc_bypass:
+db 33 C0 C3
+
+[DISABLE]
+mscrc_bypass:
+_mscrc_bypass:
+db 55 8B EC
+unregistersymbol(_mscrc_bypass)
+</AssemblerScript>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>9</ID>
+      <Description>"Godmode"</Description>
+      <LastState/>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>[enable]
+0270E0B0:
+db C2 30 00
+
+[disable]
+//E8 ? ? ? ? 8D ? ? E8 ? ? ? ? 8B ? ? 64 ? ? ? ? ? ? 59 5E 8B ? 5D C2 1C 00 [follow call]
+0270E0B0: //E8 ? ? ? ? EB ? 6A 00 6A 01 6A 00 6A 01 [Follow call]
+db 55 8B EC
+</AssemblerScript>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>10</ID>
+      <Description>"Boss Godmode"</Description>
+      <LastState/>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>[ENABLE]
+013ACC66:
+mov eax,1
+
+[DISABLE]
+013ACC66: // E8 ? ? ? ? 83 C4 ? C3 CC E8 ? ? FF FF 50 E8 ? ? ? FF 83 C4 ? C3 CC E8 ? ? FF FF 50 [FIRST]
+call 0099F950 // update
+</AssemblerScript>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>6</ID>
+      <Description>"Auto Portal"</Description>
+      <LastState/>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>[ENABLE]
+027946BA:
+db 90 90
+
+[DISABLE]
+027946BA:// CUserLocal::TryPassiveTransferField: 74 ? 8D ? ? ? ? ? E8 ? ? ? ? 85 ? 75 ? 8B ? E8 [Last result]
+db 74 4B
+</AssemblerScript>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>16</ID>
+      <Description>"No Fade"</Description>
+      <LastState/>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>define(removeFadeIn, 01B2416F) // 0F 84 ? ? ? ? 8B 35 ? ? ? ? 85 F6 74 ? 8B CE E8 ? ? ? ? 84
+define(removeFadeOut, 01B247CF) // 0F 84 ? ? 00 00 8B 1D ? ? ? ? 89 ? ? 85 DB 74
+[ENABLE]
+removeFadeIn: // CStage::FadeIn
+db 90 E9
+
+removeFadeOut: // CStage::FadeOut
+db 90 E9
+
+[DISABLE]
+removeFadeIn:
+db 0F 84 13 06 00 00
+
+removeFadeOut:
+db 0F 84 19 0D 00 00
+</AssemblerScript>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>13</ID>
+      <Description>"Ark"</Description>
+      <LastState/>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>//Moopler
+//Use with No skill CDs for full effect
+//bypasses certain requirements to use Ark spectral skills
+
+[Enable]
+0285A290:
+mov eax,0
+ret
+
+0285CD41: //Fatigue bypass
+db EB
+
+0285C2FE:// Height check removed for Gust Charge
+db EB
+
+[Disable]
+0285A290: // 55 8B ec 8b 45 08 3d ? ? ? ? 7f ? 74 ? 3d ? ? ? ? 7f [2nd last]
+push ebp
+mov ebp,esp
+mov eax,[ebp+08]
+
+0285CD41: // 7f 55 8d 45 f0 68 ? ? ? ? 50 e8 ? ? ? ? 8b c8
+db 7F
+
+0285C2FE: // 7d ? 68 ? ? ? ? 6a 0b 68 ? ? ? ? e8 ? ? ? ? 83 ? ? 32
+db 7D
+</AssemblerScript>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>20</ID>
+      <Description>"Infinite Buff"</Description>
+      <LastState/>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>// credits breadkiller
+// may be clientsided
+[ENABLE]
+alloc(hook,64)
+alloc(Original,64)
+
+02AE2BFF:
+jmp hook
+
+hook:
+cmp eax,04
+jne Original
+nop
+nop
+nop
+nop
+nop
+nop
+mov eax,00001000
+jmp 02AE4174
+
+Original:
+cmp eax,000001B7
+ja 02AE4174
+jmp dword ptr [eax*4+02AE4210]
+
+
+[DISABLE]
+02AE2BFF: //3D ? ? 00 00 0F 87 ? ? 00 00 FF 24 85 ? ? ? ? 56 8B CF E8 ? ? ? ? E9 ? ? ? ? 56 8B CF E8 ? ? ? ? E9 ? ? ? ?
+cmp eax,000001B7
+dealloc(hook)
+</AssemblerScript>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>22</ID>
+      <Description>"Unlimited Attack"</Description>
+      <LastState/>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>//7E ? 83 ? ? 7D ? 8B ? ? 2B C2 3D 6A FF FF FF 7E ? 3D 96 00 00 00 7D ? 8B ? ? 3B ? ? 7C ?
+define(UnlimitedAttack, 02804E71) // 1st jle from int CAntiRepeat::TryRepeat(long,long)
+[Enable]
+UnlimitedAttack:
+db EB
+
+[Disable]
+UnlimitedAttack:
+db 7E
+</AssemblerScript>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>24</ID>
+      <Description>"New v215.1 FMA Test"</Description>
+      <LastState/>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>[ENABLE]
+01AD33DB: // MsInterSectRect
+db EB
+
+02E9BB46: // No Level Up Damage
+db EB
+
+[DISABLE]
+01AD33DB: // 75 ? E9 ? ? FF FF 8B ? ? E8 ? ? 00 00 8B ? ? 8B (THE LAST 8B DIDNT EXIST 215.1)
+//OR c6 ? ? ? 0fb6 ? ? 85 ? 75 ? 0fb6 [2nd jne below] THIS WORKED
+db 75
+
+02E9BB46: //  74 ? C7 87 ? ? 00 00 00 00 00 00 8B 0D This popped too many Addresses.
+//68 EA BA C4 04 FF [2 je above] This was easier to find the address
+db 74
+</AssemblerScript>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>25</ID>
+      <Description>"New v215.1 Mach No Delay (Doesn't Work With Adele Skills)"</Description>
+      <LastState/>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>define(MachGND,02A04244)//75 ? 83 BD ? ? FF FF 00 75 ? 8B
+//75 31 83 BD ? ? ? ? 00 75 28 8B ? ? ? 8B ? ? ? ? ? ? 8B ? ? ? ? ? 50
+[enable]
+MachGND: //Mach GND (Melee/Basic attacks)
+db EB
+
+[disable]
+MachGND:
+db 75
+</AssemblerScript>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>26</ID>
+      <Description>"New v215.1 Mob Disarm"</Description>
+      <LastState/>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>[ENABLE]
+01A55E27: //75 ? 8D ? ? 8B ? E8 ? ? ? ? 8B ? E8 (THE AOB should just return the right address)
+jmp 01A564C0 //8B ? ? ? ? ? 85 C0 0F 84 ? ? 00 00 2B ? 0F 89 ? ? ? ? C7 ? ? 00 00 00 00 8D
+//backtrack from jmp above
+
+[DISABLE]
+01A55E27: //update here with the first AOB too.
+db 75 0A 8D 50 FA
+mov ecx, ebx
+call 01A55E2E //update call as well
+//WHEN YOU BROWSE THE FIRST AOB, the first 5 Bytes are the db values in the disable section
+//first AOB also shows the mov ecx/ebx right below the first 5 bytes
+// the call is right below the mov ecx, ebx
+</AssemblerScript>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>28</ID>
+      <Description>"M Bypass with NOTES!"</Description>
+      <LastState/>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>[ENABLE]
+aobscan(mscrc_bypass,55 8B EC 6A FF 68 ? ? ? ? 64 A1 00 00 00 00 50 81 EC ? ? ? ? A1 ? ? ? ? 33 C5 89 ? ? 53 56 57 50 8D ? ? 64 A3 ? ? ? ? 89 ? ? C7 ? ? ? ? ? ? 6A 01 8B 4D ?)
+label(_mscrc_bypass)
+registersymbol(_mscrc_bypass)
+
+// eb ? c7 85 ? ? ? ? ff c9 9a 3b 8b ? ? ? ? ? 89 ? ? ? ? ? 8b ? ? 81 ? ? ? ? ? e8 [func start] THIS AOB DIDNT WORK, I TRIED PARTIAL VERSIONS OF IT AND GOT NOTHING
+mscrc_bypass: // CWvsContext::OnEnterField: E8 ? ? ? ? 8B ? ? 83 ? ? 8B ? 89 ? ? 8D [First result (CField::Init) &amp; follow call]
+_mscrc_bypass:
+db 33 C0 C3 // HERE WE SET THE BYTES THAT ARE ORIGINALLY "55 8B EC" to "33 C0 C3" but I do not know why we do that nor why it has to be these bytes.
+
+[DISABLE]
+mscrc_bypass:
+_mscrc_bypass:
+db 55 8B EC //WHEN YOU BROWSE THE SECOND AOB, FOLLOW THE CALL, THEN YOU WILL SEE the first 3 bytes which should be placed here probably.
+unregistersymbol(_mscrc_bypass)
+// THE AOB AT THE TOP RETURNS AND ADDRESS AND SETS MSCRC_BYPASS TO THAT ADDRESS
+//WE THEN CREATE A LABEL OR A "NAME" called _mscrc_bypass for some reason
+//Then we set the bytes.
+</AssemblerScript>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>31</ID>
+      <Description>"v216.1 General FMA (WORKING!!!)"</Description>
+      <LastState/>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>[ENABLE]
+01B2888B: // MsInterSectRect
+db EB
+
+02F01976: // No Level Up Damage
+db EB
+
+[DISABLE]
+01B2888B: // 75 ? E9 ? ? FF FF 8B ? ? E8 ? ? 00 00 8B ? ? 8B (THE LAST 8B DIDNT EXIST 215.1)
+//v216.1 FIRST ATTEMPT 01B27A10 (popped four addresses on search of first AOB)
+//OR c6 ? ? ? 0fb6 ? ? 85 ? 75 ? 0fb6 [2nd jne below]
+//V216.1 SECOND ATTEMPT use second AOB but I cut off "? 0f b6" and found one address
+//when you browse you end up in between two jnes, I took the lower one addess: 01B2888B
+db 75
+
+02F01976: //  74 ? C7 87 ? ? 00 00 00 00 00 00 8B 0D This popped too many Addresses.
+//68 EA BA C4 04 FF [2 je above] This was easier to find the address
+//the second AOB when you brose the memory reasion u see alot of push commands above it
+//FIRST ATTEMPT V216.1 USING SECOND AOB = 02F01976
+db 74
+</AssemblerScript>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>32</ID>
+      <Description>"V216.1 Mob Disarm (WORKING!!!)"</Description>
+      <LastState/>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>[ENABLE]
+01AAB2B7: //75 ? 8D ? ? 8B ? E8 ? ? ? ? 8B ? E8 (THE AOB should just return the right address)
+//V216.1 AOB working, returned one address.
+jmp 01AAB950 //8B ? ? ? ? ? 85 C0 0F 84 ? ? 00 00 2B ? 0F 89 ? ? ? ? C7 ? ? 00 00 00 00 8D
+//backtrack from jmp above
+//V216.1 AOB for jmp line found 1 address :01AAB950
+
+[DISABLE]
+01AAB2B7: //update here with the first AOB too.
+db 75 0A 8D 50 FA
+mov ecx, ebx
+call 01B1D010 //update call as well
+//WHEN YOU BROWSE THE FIRST AOB, the first 5 Bytes are the db values in the disable section
+//first AOB also shows the mov ecx/ebx right below the first 5 bytes
+// the call is right below the mov ecx, ebx
+//V216.1 the address of the call 01AAB2BE
+//V216.1 the address being called (GREEN TEXT) = 01B1D010
+</AssemblerScript>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>33</ID>
+      <Description>"V216.1 General Mach No Delay (Working!!!, but not for Adele)"</Description>
+      <LastState/>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>define(MachGND,02A680FF)//75 ? 83 BD ? ? FF FF 00 75 ? 8B
+//75 31 83 BD ? ? ? ? 00 75 28 8B ? ? ? 8B ? ? ? ? ? ? 8B ? ? ? ? ? 50
+//V216.1 I used the second AOB but only partially
+//V216.1 75 31 83 BD ? ? ? ? 00 75 28 8B ? ? ? 8B (this part of the second AOB returned 1 address)
+//02A680FF
+[enable]
+MachGND: //Mach GND (Melee/Basic attacks)
+db EB
+
+[disable]
+MachGND:
+db 75
+</AssemblerScript>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>34</ID>
+      <Description>"V216.1 Unlimited Attack (Not Tested)"</Description>
+      <LastState/>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>//7E ? 83 ? ? 7D ? 8B ? ? 2B C2 3D 6A FF FF FF 7E ? 3D 96 00 00 00 7D ? 8B ? ? 3B ? ? 7C ?
+//V216.1 AOB above returned 1 address 02B40841
+//when browsign memory region landed exactly ona jle op code.
+define(UnlimitedAttack, 02B40841) // 1st jle from int CAntiRepeat::TryRepeat(long,long)
+[Enable]
+UnlimitedAttack:
+db EB
+
+[Disable]
+UnlimitedAttack:
+db 7E
+</AssemblerScript>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>35</ID>
+      <Description>"V216.1 Boss Godmode (WORKING!!!)"</Description>
+      <LastState/>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>[ENABLE]
+0161BA36:
+mov eax,1
+
+[DISABLE]
+0161BA36: // E8 ? ? ? ? 83 C4 ? C3 CC E8 ? ? FF FF 50 E8 ? ? ? FF 83 C4 ? C3 CC E8 ? ? FF FF 50 [FIRST]
+//V216.1 AOB returned 1 address 01618A96, LANDS DIRECTLY ON A CALL IN MEMORY REGION
+//V216.1 address being called is : 009E6CF0
+///V217.1 SAME AS 216.1
+call 009E6A90 // update
+</AssemblerScript>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>36</ID>
+      <Description>"V216.1 Mob Freeze (Working!!!)"</Description>
+      <LastState/>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>[ENABLE]
+alloc(CMob__IsRisingByToss_Hook,128)
+label(Return_True)
+
+CMob__IsRisingByToss_Hook:
+je Return_True
+jmp 01ADF6D0+7 //update with aob below
+
+Return_True:
+mov eax,00000001
+ret
+
+01ADF6D0: // CMob::IsRisingByToss update with aob below
+jmp CMob__IsRisingByToss_Hook
+db 90 90
+
+[DISABLE]
+01ADF6D0: //83 B9 ? ? ? ? 00 75 ? 83 B9 ? ? ? ? 00 74 ? 8B 89 ? ? ? ? 8D ? ? F7 D9 1B C9 23 C8 E8 ? ? ? ? 85 C0 75 ?
+//V216.1 AOB returned 1 address 01ADF6D0
+cmp dword ptr [ecx+00000B18],00 //update with aob above
+//V216.1 The Browse on the 1 address lands on a CMP dword ptr op code. I am gonna add the new change.
+dealloc(CMob__IsRisingByToss_Hook)
+</AssemblerScript>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>37</ID>
+      <Description>"V217.1 SwordieMS FMA WORKING"</Description>
+      <LastState/>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>[ENABLE]
+01B264DB: // MsInterSectRect
+db EB
+
+02EEFF96: // No Level Up Damage
+db EB
+
+[DISABLE]
+01B264DB: // 75 ? E9 ? ? FF FF 8B ? ? E8 ? ? 00 00 8B ? ? 8B (THE LAST 8B DIDNT EXIST 215.1)
+//v216.1 FIRST ATTEMPT 01B27A10 (popped four addresses on search of first AOB)
+//OR c6 ? ? ? 0fb6 ? ? 85 ? 75 ? 0fb6 [2nd jne below]
+//V216.1 SECOND ATTEMPT use second AOB but I cut off "? 0f b6" and found one address
+//when you browse you end up in between two jnes, I took the lower one addess: 01B2888B
+///v217.1 FIRST ATTEMPT USING SAME METHODOLOGY RIGHT ABOVE THIS LINE
+/// USED AOB: c6 ? ? ? 0fb6 ? ? 85 ? 75 ? (FOUND 1 ADDRESS, ENDED UP BETWEEN TWO JNEs in MEM VIEW, TOOK BOTTOM JNE ADDRESS 01B264DB)
+db 75
+
+02EEFF96: //  74 ? C7 87 ? ? 00 00 00 00 00 00 8B 0D This popped too many Addresses.
+//68 EA BA C4 04 FF [2 je above] This was easier to find the address
+//the second AOB when you brose the memory reasion u see alot of push commands above it
+//FIRST ATTEMPT V216.1 USING SECOND AOB = 02F01976
+///v217.1 FIRST ATTEMPT USING SAME METHODOLOGY
+///USED AOB: 68 EA BA C4 04 FF [found 1 address, 2 je above ( you will see alot of push opcodes, TAKE SECOND JE ADDRESS?]
+db 74
+</AssemblerScript>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>38</ID>
+      <Description>"V217.1 SwordieMS Mob Freeze WORKING"</Description>
+      <LastState/>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>[ENABLE]
+alloc(CMob__IsRisingByToss_Hook,128)
+label(Return_True)
+
+CMob__IsRisingByToss_Hook:
+je Return_True
+jmp 01ADD270+7 //update with aob below
+
+Return_True:
+mov eax,00000001
+ret
+
+01ADD270: // CMob::IsRisingByToss update with aob below
+jmp CMob__IsRisingByToss_Hook
+db 90 90
+
+[DISABLE]
+01ADD270: //83 B9 ? ? ? ? 00 75 ? 83 B9 ? ? ? ? 00 74 ? 8B 89 ? ? ? ? 8D ? ? F7 D9 1B C9 23 C8 E8 ? ? ? ? 85 C0 75 ?
+//V216.1 AOB returned 1 address 01ADF6D0
+///V217.1 AOB above returned 1 address 01ADD270, MEMORY BROWSE SHOWED and LANDED THE SAME CMP BELOW, USED THIS ADDRESS TO UPDATE
+cmp dword ptr [ecx+00000B18],00 //update with aob above
+//V216.1 The Browse on the 1 address lands on a CMP dword ptr op code. I am gonna add the new change.
+dealloc(CMob__IsRisingByToss_Hook)
+</AssemblerScript>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>39</ID>
+      <Description>"V217.1 SwordieMS General Mach No Delay WORKING"</Description>
+      <LastState/>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>define(MachGND,02A569CF)//75 ? 83 BD ? ? FF FF 00 75 ? 8B
+//75 31 83 BD ? ? ? ? 00 75 28 8B ? ? ? 8B ? ? ? ? ? ? 8B ? ? ? ? ? 50
+//V216.1 I used the second AOB but only partially
+//V216.1 75 31 83 BD ? ? ? ? 00 75 28 8B ? ? ? 8B (this part of the second AOB returned 1 address)
+//02A680FF
+///V217.1 Used partial AOB from 216.1, found 1 Address, 02A569CF
+[enable]
+MachGND: //Mach GND (Melee/Basic attacks)
+db EB
+
+[disable]
+MachGND:
+db 75
+</AssemblerScript>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>40</ID>
+      <Description>"V217.1 SwordieMS Mob Disarm (Untested But No Crash)"</Description>
+      <LastState/>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>[ENABLE]
+01AA8E07: //75 ? 8D ? ? 8B ? E8 ? ? ? ? 8B ? E8 (THE AOB should just return the right address)
+//V216.1 AOB working, returned one address.
+///V217.1 AOB Working, returned one address. 01AA8E07
+jmp 01AA94A0 //8B ? ? ? ? ? 85 C0 0F 84 ? ? 00 00 2B ? 0F 89 ? ? ? ? C7 ? ? 00 00 00 00 8D
+//backtrack from jmp above
+//V216.1 AOB for jmp line found 1 address :01AAB950
+///V217.1 AOB for jmp line found 1 address: 01AA94A0
+
+[DISABLE]
+01AA8E07: //update here with the first AOB too.
+db 75 0A 8D 50 FA
+mov ecx, ebx
+call 01B1AC10 //update call as well
+//WHEN YOU BROWSE THE FIRST AOB, the first 5 Bytes are the db values in the disable section
+///V217.1 As of 217.1 THIS IS STILL TRUE, updated the address being called as described below
+//first AOB also shows the mov ecx/ebx right below the first 5 bytes
+// the call is right below the mov ecx, ebx
+//V216.1 the address of the call 01AAB2BE
+//V216.1 the address being called (GREEN TEXT) = 01B1D010
+</AssemblerScript>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>45</ID>
+      <Description>"DMG Hack Mini Edit (DO NOT JUMP, SOME VALUES BOOST MOBS 65~80 safe zone) STATIC MEMORY"</Description>
+      <LastState Value="100" RealAddress="0352FDC0"/>
+      <ShowAsSigned>0</ShowAsSigned>
+      <VariableType>Double</VariableType>
+      <Address>MapleStory.exe+312FDC0</Address>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>46</ID>
+      <Description>"V217.1 Boss Godmode"</Description>
+      <LastState/>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>[ENABLE]
+0161BA36:
+mov eax,1
+
+[DISABLE]
+0161BA36: // E8 ? ? ? ? 83 C4 ? C3 CC E8 ? ? FF FF 50 E8 ? ? ? FF 83 C4 ? C3 CC E8 ? ? FF FF 50 [FIRST]
+//V216.1 AOB returned 1 address 01618A96, LANDS DIRECTLY ON A CALL IN MEMORY REGION
+//V216.1 address being called is : 009E6CF0
+///V217.1 SAME AS 216.1
+call 009E6A90 // update
+</AssemblerScript>
+    </CheatEntry>
+  </CheatEntries>
+  <UserdefinedSymbols/>
+</CheatTable>
